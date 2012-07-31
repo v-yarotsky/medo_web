@@ -11,6 +11,17 @@ jQuery ->
     tagName: "li"
     className: "task"
 
+    events:
+      "click .delete_task": "deleteTask"
+
+    deleteTask: (e) =>
+      e.preventDefault()
+      @model.destroy()
+        # wait: true
+        # error: -> alert "qqq"
+      console.log @model
+      false
+
     render: =>
       console.log @model.toJSON()
       @$el.html(@template(@model.toJSON()))
