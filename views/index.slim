@@ -10,12 +10,17 @@ html
     script src="/application.js"
 
     script type="text/template" id="task_template"
-      | <%= description %><a href="#" class="delete_task" title="Удалить к херам собачьим">[X]</a>
+      | <%= description %>
+      | <a href="#" class="delete_task">[X]</a>
 
   body
     #content
       #header
+        h1 Medo Web
         form id="task-form" action="/tasks" method="post"
-          input class="description" type="text" name="description" placeholder="description"
-          input type="submit" value="new"
+          #field-description.field-container
+            label for="task-description" Description:
+            input id="task-description" type="text" name="description" placeholder="bla-bla-bla"
+          #field-submit.field-container
+            input type="submit" value="new"
       ul#tasks
