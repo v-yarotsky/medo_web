@@ -1,3 +1,5 @@
 gem 'sinatra'
 gem 'json'
 gem 'slim'
+gem 'sass'
+gem 'coffee-script'

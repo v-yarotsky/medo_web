@@ -3,8 +3,17 @@ require 'isolate/now'
 require 'sinatra'
 require 'slim'
 require 'json'
+require 'sass'
 
-set :public_folder, File.expand_path('../public', __FILE__)
+get '/application.css' do
+  content_type 'text/css', charset: 'utf-8'
+  scss :application
+end
+
+get '/application.js' do
+  content_type 'text/javascript', charset: 'utf-8'
+  coffee :application
+end
 
 get '/' do
   slim :index

@@ -6,3 +6,4 @@ tmp/
 nohup.out
 pkg/
 coverage/
+.sass-cache/

@@ -2,7 +2,20 @@ doctype html
 html
   head
     title Medo - Web
+    link rel="stylesheet" href="application.css"
+    script src="/jquery-1.7.2.js"
+    script src="/underscore.js"
+    script src="/json2.js"
+    script src="/backbone.js"
+    script src="/application.js"
+
+    script type="text/template" id="task_template"
+      | <%= description %>
+
   body
     #content
-      = @data.inspect
-
+      #header
+        form id="task-form" action="/tasks" method="post"
+          input class="description" type="text" name="description" placeholder="description"
+          input type="submit" value="new"
+      ul#tasks
