@@ -40,7 +40,6 @@ jQuery ->
         taskView = new window.TaskView(model: task)
         @$el.append(taskView.render().el)
       @
-      @$el.find('li.task:even').addClass('odd')
 
   new window.TasksView()
 

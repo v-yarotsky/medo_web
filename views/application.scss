@@ -57,7 +57,7 @@ body {
 
         .task { 
             padding: 10px 5px; 
-            &.odd { background: #DDD; }
+            &:nth-child(odd) { background: #DDD; }
 
             .delete_task {
                 float: right;
