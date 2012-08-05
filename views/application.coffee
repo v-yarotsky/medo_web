@@ -6,6 +6,20 @@ jQuery ->
     url: '/tasks'
     model: window.Task
 
+  class window.NewTaskView extends Backbone.View
+    el: "#task-form"
+    events:
+      "submit": "createTask"
+
+    createTask: (e) =>
+      description = @$el.find("input[name='description']").val()
+      e.preventDefault()
+      $.post '/tasks', { description: description }, (data) =>
+        if data && data.length
+          task = JSON.parse(data)
+          window.tasks.push(task)
+          @el.reset()
+
   class window.TaskView extends Backbone.View
     template: _.template($("#task_template").html())
     tagName: "li"
@@ -30,18 +44,24 @@ jQuery ->
   class window.TasksView extends Backbone.View
     el: "#tasks"
 
-    initialize: =>
-      @tasks = new window.Tasks()
-      @tasks.fetch()
+    initialize: (tasks) =>
+      @tasks = tasks
       @tasks.bind("reset", @render)
+      @tasks.bind("add", @render)
+      @tasks.bind("remove", @render)
 
     render: =>
+      @$el.empty()
       for task in @tasks.models
         taskView = new window.TaskView(model: task)
         @$el.append(taskView.render().el)
       @
 
-  new window.TasksView()
+  window.tasks = new Tasks()
+  window.tasks.fetch()
+
+  window.tasksView = new window.TasksView(window.tasks)
+  window.newTaskView = new window.NewTaskView()
 
 
 
