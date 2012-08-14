@@ -5,6 +5,52 @@ require 'slim'
 require 'json'
 require 'sass'
 
+class Task
+  attr_reader :id, :attributes
+
+  def initialize(attributes)
+    @id, @attributes = Time.now, attributes
+  end
+
+  def to_json(*arguments)
+    { 'id' => @id }.merge(attributes).to_json(arguments)
+  end
+end
+
+class Medo
+  FILE = "/home/ermak/.medo-tasks"
+
+  attr_reader :tasks
+
+  def initialize
+    @path, @tasks = FILE, []
+    JSON.parse(File.read(@path)).each do |task|
+      @tasks.push Task.new(task)
+    end
+  end
+
+  def add(attributes)
+    task = Task.new(attributes)
+    @tasks.push task
+    task
+  end
+
+  def delete(id)
+    task = @tasks.delete_if { |task| task.id == id }
+  end
+
+  private
+    def save_file
+      File.open(@path, 'w') do |f|
+        f.write @tasks.attributes.to_json
+      end
+    end
+end
+
+configure do
+  set :medo => Medo.new
+end
+
 get '/application.css' do
   content_type 'text/css', charset: 'utf-8'
   scss :application
@@ -20,41 +66,16 @@ get '/' do
 end
 
 get '/tasks' do
-  @@tasks.to_json
+  settings.medo.tasks.to_json
 end
 
 post '/tasks' do
-  task = { "description" => params["description"], "id" => (@@last_id += 1) }
-  @@tasks.push task
+  attributes = { 'description' => params['description'] }
+  task = settings.medo.add(attributes)
   task.to_json
 end
 
 delete '/tasks/:id' do
-  puts "had: #{@@tasks.size}" + @@tasks.map { |t| t["description"] }.inspect
-  @@tasks.delete_if { |t| t["id"] == Integer(params["id"]) }.tap { |t| puts "Now: #{t.size}: " + t.map { |q| q["description"]}.inspect }.to_json
-end
-
-private
-
-TASKS_FILE = "/Users/vladimiryarotsky/.medo-tasks.web"
-
-@@last_id = 1
-
-@@tasks = JSON.parse(File.read(TASKS_FILE)).each_with_index do |t, idx|
-  t["id"] = @@last_id
-  @@last_id += 1
-end.to_a
-
-def read_tasks
-  JSON.parse(File.read(TASKS_FILE)).each_with_index do |t, idx|
-    t[:id] = idx + 1
-  end
-end
-
-def write_tasks(tasks)
-  tasks_to_write = tasks.dup
-  tasks_to_write.each { |t| t.delete(:id) }
-  File.open(TASKS_FILE, "w") do |f|
-    f.write tasks_to_write.to_json
-  end
+  task = settings.medo.delete params['id']
+  task.to_json
 end
