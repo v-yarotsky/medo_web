@@ -4,12 +4,13 @@ require 'sinatra'
 require 'slim'
 require 'json'
 require 'sass'
+require 'uuid'
 
 class Task
   attr_reader :id, :attributes
 
   def initialize(attributes)
-    @id, @attributes = Time.now, attributes
+    @id, @attributes = UUID.new.generate, attributes
   end
 
   def to_json(*arguments)
@@ -32,17 +33,21 @@ class Medo
   def add(attributes)
     task = Task.new(attributes)
     @tasks.push task
+    save_file
     task
   end
 
   def delete(id)
-    task = @tasks.delete_if { |task| task.id == id }
+    @tasks.delete_if { |task| task.id == id.to_i }
+    save_file
   end
 
   private
     def save_file
+      medo = []
+      @tasks.each { |task| medo.push task.attributes }
       File.open(@path, 'w') do |f|
-        f.write @tasks.attributes.to_json
+        f.write medo.to_json
       end
     end
 end
