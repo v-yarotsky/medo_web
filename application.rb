@@ -1,86 +1,44 @@
 require 'rubygems'
 require 'isolate/now'
-require 'sinatra'
+require 'sinatra/base'
 require 'slim'
 require 'json'
 require 'sass'
-require 'uuid'
+require './medo'
 
-class Task
-  attr_reader :id, :attributes
+module Medo
+  class App < Sinatra::Base
+    configure do
+      set :medo => Medo.new
+    end
 
-  def initialize(attributes)
-    @id, @attributes = UUID.new.generate, attributes
-  end
+    get '/application.css' do
+      content_type 'text/css', charset: 'utf-8'
+      scss :application
+    end
 
-  def to_json(*arguments)
-    { 'id' => @id }.merge(attributes).to_json(arguments)
-  end
-end
+    get '/application.js' do
+      content_type 'text/javascript', charset: 'utf-8'
+      coffee :application
+    end
 
-class Medo
-  FILE = "/home/ermak/.medo-tasks"
+    get '/' do
+      slim :index
+    end
 
-  attr_reader :tasks
+    get '/tasks' do
+      settings.medo.tasks.to_json
+    end
 
-  def initialize
-    @path, @tasks = FILE, []
-    JSON.parse(File.read(@path)).each do |task|
-      @tasks.push Task.new(task)
+    post '/tasks' do
+      attributes = { 'description' => params['description'] }
+      task = settings.medo.add(attributes)
+      task.to_json
+    end
+
+    delete '/tasks/:id' do
+      task = settings.medo.delete params['id']
+      task.to_json
     end
   end
-
-  def add(attributes)
-    task = Task.new(attributes)
-    @tasks.push task
-    save_file
-    task
-  end
-
-  def delete(id)
-    @tasks.delete_if { |task| task.id == id.to_i }
-    save_file
-  end
-
-  private
-    def save_file
-      medo = []
-      @tasks.each { |task| medo.push task.attributes }
-      File.open(@path, 'w') do |f|
-        f.write medo.to_json
-      end
-    end
-end
-
-configure do
-  set :medo => Medo.new
-end
-
-get '/application.css' do
-  content_type 'text/css', charset: 'utf-8'
-  scss :application
-end
-
-get '/application.js' do
-  content_type 'text/javascript', charset: 'utf-8'
-  coffee :application
-end
-
-get '/' do
-  slim :index
-end
-
-get '/tasks' do
-  settings.medo.tasks.to_json
-end
-
-post '/tasks' do
-  attributes = { 'description' => params['description'] }
-  task = settings.medo.add(attributes)
-  task.to_json
-end
-
-delete '/tasks/:id' do
-  task = settings.medo.delete params['id']
-  task.to_json
 end
