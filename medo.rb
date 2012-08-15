@@ -33,7 +33,7 @@ module Medo
     end
 
     def delete(id)
-      @tasks.delete_if { |task| task.id == id.to_i }
+      @tasks.delete_if { |task| task.id.to_s == id.to_s }
       save_file
     end
 
