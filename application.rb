@@ -12,16 +12,6 @@ module Medo
       set :medo => Medo.new
     end
 
-    get '/application.css' do
-      content_type 'text/css', charset: 'utf-8'
-      scss :application
-    end
-
-    get '/application.js' do
-      content_type 'text/javascript', charset: 'utf-8'
-      coffee :application
-    end
-
     get '/' do
       slim :index
     end
