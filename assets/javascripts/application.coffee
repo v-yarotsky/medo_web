@@ -8,11 +8,7 @@
 #= require_tree ./views
 
 jQuery ->
-  window.tasks = new Tasks()
-  window.tasks.fetch()
-
   window.tasksView = new window.TasksView(window.tasks)
-  window.newTaskView = new window.NewTaskView()
 
 
 

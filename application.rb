@@ -21,8 +21,8 @@ module Medo
     end
 
     post '/tasks' do
-      attributes = { 'description' => params['description'] }
-      task = settings.medo.add(attributes)
+      data = JSON.parse(request.body.read)
+      task = settings.medo.add({ 'description' => data['description'] })
       task.to_json
     end
 
