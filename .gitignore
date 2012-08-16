@@ -7,3 +7,6 @@ nohup.out
 pkg/
 coverage/
 .sass-cache/
+
+*.sublime-project
+*.sublime-workspace
