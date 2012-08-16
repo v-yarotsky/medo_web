@@ -3,7 +3,6 @@ jQuery ->
     el: "#content"
     events:
       'submit #task-form': 'createTask'
-      'click': 'some'
 
     initialize: (tasks) =>
       @container = @$('#tasks')
@@ -13,6 +12,7 @@ jQuery ->
       @tasks.bind("reset", @render)
       @tasks.bind("add", @render)
       @tasks.bind("remove", @render)
+      @tasks.bind("change", @render)
 
       @tasks.fetch()
 

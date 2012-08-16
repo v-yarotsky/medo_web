@@ -26,6 +26,12 @@ module Medo
       task.to_json
     end
 
+    put '/tasks/:id' do 
+      data = JSON.parse(request.body.read)
+      task = settings.medo.change(params['id'], { 'done' => data['done'] })
+      task.to_json
+    end
+
     delete '/tasks/:id' do
       task = settings.medo.delete params['id']
       task.to_json

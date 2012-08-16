@@ -2,7 +2,8 @@ require 'uuid'
 
 module Medo
   class Task
-    attr_reader :id, :attributes
+    attr_reader :id
+    attr_accessor :attributes
 
     def initialize(attributes)
       @id, @attributes = UUID.new.generate, attributes
@@ -30,6 +31,11 @@ module Medo
       @tasks.push task
       save_file
       task
+    end
+
+    def change(id, attributes)
+      task = @tasks.select { |task| task.id.to_s == id.to_s }.first
+      attributes.each { |key, value| task.attributes[key] = value }
     end
 
     def delete(id)

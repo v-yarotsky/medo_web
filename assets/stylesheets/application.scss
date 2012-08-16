@@ -64,6 +64,14 @@ body {
                 color: red;
                 text-decoration: none;
             }
+
+            .done_task {
+                float: right;
+                color: green;
+                text-decoration: none;
+            }
+
+            &.done { color: gray; }
         }
     }
 }
