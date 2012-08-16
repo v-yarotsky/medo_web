@@ -7,6 +7,7 @@ jQuery ->
     events:
       "click .delete_task": "deleteTask"
       'click .done_task' : 'doneTask'
+      'click .reset_task' : 'resetTask'
 
     deleteTask: (e) =>
       e.preventDefault()
@@ -18,6 +19,11 @@ jQuery ->
     doneTask: (event) =>
       event.preventDefault()
       @model.save { 'done' : true }
+      false
+
+    resetTask: (event) =>
+      event.preventDefault()
+      @model.save { 'done' : false }
       false
 
     render: =>
